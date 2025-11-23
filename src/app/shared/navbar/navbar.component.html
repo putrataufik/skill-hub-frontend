@@ -1,0 +1,38 @@
+<!-- src/app/shared/navbar/navbar.component.html -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light skillhub-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/dashboard">
+      SkillHub
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#skillHubNavbar"
+      aria-controls="skillHubNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="skillHubNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li
+          class="nav-item"
+          *ngFor="let item of navItems"
+        >
+          <a
+            class="nav-link"
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+          >
+            {{ item.label }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

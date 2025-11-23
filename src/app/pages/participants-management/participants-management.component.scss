@@ -1,0 +1,107 @@
+/* src/app/pages/participants-management/participants-management.component.scss */
+
+.participants-page {
+  padding-top: 0.75rem;
+}
+
+/* Card kiri (list participants) */
+.participants-card {
+  border-radius: 0.75rem;
+  border: none;
+  overflow: hidden; // header + body ikut rounded
+}
+
+.participants-header h5 {
+  font-weight: 600;
+}
+
+/* Table participants (kiri) */
+.participants-table {
+  font-size: 0.8rem;
+
+  th,
+  td {
+    padding: 0.35rem 0.5rem;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  &.table-hover tbody tr:hover {
+    background-color: #f3f4f6; // hover abu-abu muda
+  }
+
+  tbody tr.active {
+    background-color: #e5e7eb; // aktif abu-abu sedikit lebih gelap
+  }
+
+  tbody tr.active:hover {
+    background-color: #e5e7eb;
+  }
+}
+
+/* Card kanan (detail) */
+.participant-detail-card {
+  border-radius: 0.75rem;
+  border: none;
+}
+
+.detail-item {
+  margin-bottom: 0.25rem;
+
+  .detail-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+
+  .detail-value {
+    font-size: 0.9rem;
+    color: #111827;
+  }
+}
+
+/* Tabel enrollments kanan */
+.enrollments-table {
+  font-size: 0.8rem;
+
+  th,
+  td {
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+/* Modal custom tetap seperti sebelumnya */
+.sh-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.sh-modal {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3);
+  overflow: hidden;
+}
+
+.sh-modal-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sh-modal-body {
+  padding: 0.75rem 1rem 1rem;
+  font-size: 0.85rem;
+}

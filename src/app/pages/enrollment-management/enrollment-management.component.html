@@ -1,0 +1,301 @@
+<!-- src/app/pages/enrollment-management/enrollment-management.component.html -->
+
+<div class="enrollments-page container-fluid">
+  <div class="row g-3">
+    <!-- LEFT: LIST ENROLLMENTS -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm enrollments-card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center enrollments-header"
+        >
+          <h5 class="mb-0">Enrollments</h5>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            (click)="openAddModal()"
+          >
+            Add Enrollment
+          </button>
+        </div>
+
+        <div class="card-body p-0">
+          <div *ngIf="isLoadingList" class="text-muted small p-2">
+            Loading enrollments...
+          </div>
+
+          <ng-container *ngIf="!isLoadingList">
+            <div
+              class="table-responsive"
+              *ngIf="enrollments.length > 0; else noEnrollments"
+            >
+              <table
+                class="table table-sm table-hover mb-0 enrollments-table"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th>Participant</th>
+                    <th>Class</th>
+                    <th>Enrolled At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let e of enrollments"
+                    (click)="onSelectEnrollment(e)"
+                    [class.active]="selectedEnrollment?.id === e.id"
+                  >
+                    <td class="fw-semibold">
+                      {{ e.participant.fullName }}
+                      <div class="small text-muted">
+                        {{ e.participant.email }}
+                      </div>
+                    </td>
+                    <td class="text-muted small">
+                      {{ e.class.className }}
+                    </td>
+                    <td class="text-muted small">
+                      {{ e.enrollmentDate | date : "dd MMM yyyy, HH:mm" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <ng-template #noEnrollments>
+              <div class="text-muted small p-2">
+                No enrollments found. Click "Add Enrollment" to create one.
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: DETAIL ENROLLMENT -->
+    <div class="col-12 col-lg-7">
+      <ng-container *ngIf="selectedEnrollment; else noSelection">
+        <div class="card shadow-sm enrollment-detail-card">
+          <div class="card-header d-flex justify-content-between">
+            <div>
+              <h5 class="mb-0">
+                {{ selectedEnrollment.participant.fullName }}
+              </h5>
+              <div class="small text-muted">
+                Enrollment ID: {{ selectedEnrollment.id }}
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="small text-muted mt-1">
+                {{ selectedEnrollment.enrollmentDate
+                  | date : "dd MMM yyyy, HH:mm" }}
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- PARTICIPANT INFO -->
+            <h6 class="mb-2">Participant Info</h6>
+            <div class="row mb-3">
+              <div class="col-12 col-md-6">
+                <div class="detail-item">
+                  <div class="detail-label">Email</div>
+                  <div class="detail-value">
+                    {{ selectedEnrollment.participant.email || "-" }}
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">Phone</div>
+                  <div class="detail-value">
+                    {{ selectedEnrollment.participant.phone || "-" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="detail-item">
+                  <div class="detail-label">Date of Birth</div>
+                  <div class="detail-value">
+                    {{
+                      selectedEnrollment.participant.dateOfBirth
+                        | date : "dd MMM yyyy"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CLASS INFO -->
+            <h6 class="mb-2">Class Info</h6>
+            <div class="row mb-3">
+              <div class="col-12 col-md-7">
+                <div class="detail-item">
+                  <div class="detail-label">Class Name</div>
+                  <div class="detail-value">
+                    {{ selectedEnrollment.class.className || "-" }}
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">Period</div>
+                  <div class="detail-value">
+                    {{
+                      selectedEnrollment.class.startDate
+                        | date : "dd MMM yyyy"
+                    }}
+                    -
+                    {{
+                      selectedEnrollment.class.endDate
+                        | date : "dd MMM yyyy"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-5">
+                <div class="detail-item">
+                  <div class="detail-label">Capacity</div>
+                  <div class="detail-value">
+                    {{ selectedEnrollment.class.capacity }} participant(s)
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">Created At</div>
+                  <div class="detail-value small text-muted">
+                    {{
+                      selectedEnrollment.class.createdAt
+                        | date : "dd MMM yyyy, HH:mm"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- NOTES -->
+            <div class="mb-2">
+              <div class="detail-label mb-1">Notes</div>
+              <div class="detail-value">
+                {{ selectedEnrollment.notes || "-" }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noSelection>
+        <div class="card shadow-sm">
+          <div class="card-body text-muted small">
+            Select an enrollment from the list to view details.
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- ADD ENROLLMENT MODAL -->
+  <div class="sh-modal-backdrop" *ngIf="showAddModal">
+    <div class="sh-modal">
+      <div class="sh-modal-header">
+        <h5 class="mb-0">Add Enrollment</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="closeAddModal()"
+        ></button>
+      </div>
+
+      <div class="sh-modal-body">
+        <form [formGroup]="addForm" (ngSubmit)="submitAddEnrollment()">
+          <div class="mb-3">
+            <label class="form-label">Participant</label>
+            <select
+              class="form-select form-select-sm"
+              formControlName="participantId"
+            >
+              <option [ngValue]="null" disabled>
+                -- Select Participant --
+              </option>
+              <option
+                *ngFor="let p of participants"
+                [ngValue]="p.id"
+              >
+                {{ p.fullName }} ({{ p.email }})
+              </option>
+            </select>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="participantIdCtrl?.invalid && participantIdCtrl?.touched"
+            >
+              Participant is required.
+            </div>
+            <div
+              class="text-muted small mt-1"
+              *ngIf="isLoadingParticipants"
+            >
+              Loading participants...
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Class</label>
+            <select
+              class="form-select form-select-sm"
+              formControlName="classId"
+            >
+              <option [ngValue]="null" disabled>
+                -- Select Class --
+              </option>
+              <option
+                *ngFor="let c of classes"
+                [ngValue]="c.id"
+              >
+                {{ c.className }} ({{ c.startDate | date : "dd MMM" }} -
+                {{ c.endDate | date : "dd MMM" }})
+              </option>
+            </select>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="classIdCtrl?.invalid && classIdCtrl?.touched"
+            >
+              Class is required.
+            </div>
+            <div
+              class="text-muted small mt-1"
+              *ngIf="isLoadingClasses"
+            >
+              Loading classes...
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea
+              rows="2"
+              class="form-control form-control-sm"
+              formControlName="notes"
+            ></textarea>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="closeAddModal()"
+              [disabled]="isSubmitting"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-sm btn-primary"
+              [disabled]="isSubmitting"
+            >
+              <span
+                *ngIf="isSubmitting"
+                class="spinner-border spinner-border-sm me-1"
+              ></span>
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

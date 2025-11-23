@@ -1,0 +1,480 @@
+<!-- src/app/pages/class-management/class-management.component.html -->
+
+<div class="classes-page container-fluid">
+  <div class="row g-3">
+    <!-- LEFT: LIST CLASSES -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm classes-card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center classes-header"
+        >
+          <h5 class="mb-0">Classes</h5>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            (click)="openAddModal()"
+          >
+            Add Class
+          </button>
+        </div>
+
+        <div class="card-body p-0">
+          <div *ngIf="isLoadingList" class="text-muted small p-2">
+            Loading classes...
+          </div>
+
+          <ng-container *ngIf="!isLoadingList">
+            <div
+              class="table-responsive"
+              *ngIf="classes.length > 0; else noClasses"
+            >
+              <table class="table table-sm table-hover mb-0 classes-table">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Class Name</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Start</th>
+                    <th scope="col" class="text-end">Capacity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let c of classes"
+                    (click)="onSelectClass(c)"
+                    [class.active]="selectedClass?.id === c.id"
+                  >
+                    <td class="fw-semibold">
+                      {{ c.className }}
+                      <div class="small mt-1">
+                        <span
+                          class="badge"
+                          [ngClass]="{
+                            'bg-success': c.status === 'ACTIVE',
+                            'bg-secondary': c.status === 'INACTIVE'
+                          }"
+                        >
+                          {{ c.status }}
+                        </span>
+                      </div>
+                    </td>
+                    <td class="text-muted small">
+                      {{ c.instructor || '-' }}
+                    </td>
+                    <td class="text-muted small">
+                      {{ c.startDate | date : 'dd MMM' }}
+                    </td>
+                    <td class="text-end text-muted small">
+                      {{ c.capacity }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <ng-template #noClasses>
+              <div class="text-muted small p-2">
+                No classes found. Click "Add Class" to create one.
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: DETAIL CLASS -->
+    <div class="col-12 col-lg-8">
+      <div *ngIf="isLoadingDetail" class="text-muted small mb-2">
+        Loading class detail...
+      </div>
+
+      <ng-container *ngIf="selectedClass; else noSelection">
+        <div class="card shadow-sm class-detail-card">
+          <div class="card-header d-flex justify-content-between">
+            <div>
+              <h5 class="mb-0">
+                {{ selectedClass.className }}
+              </h5>
+              <div class="small text-muted">
+                {{ selectedClass.startDate | date : 'dd MMM yyyy' }} -
+                {{ selectedClass.endDate | date : 'dd MMM yyyy' }}
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="mb-1">
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': selectedClass.status === 'ACTIVE',
+                    'bg-secondary': selectedClass.status === 'INACTIVE'
+                  }"
+                >
+                  {{ selectedClass.status }}
+                </span>
+              </div>
+
+              <div class="detail-label">Instructor</div>
+              <div class="detail-value">
+                {{ selectedClass.instructor || '-' }}
+              </div>
+              <div class="detail-label mt-1">Capacity</div>
+              <div class="detail-value">
+                {{ selectedClass.capacity }} participant(s)
+              </div>
+
+              <div class="mt-2 d-flex gap-1 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="onToggleStatus()"
+                >
+                  {{
+                    selectedClass.status === 'ACTIVE'
+                      ? 'Set INACTIVE'
+                      : 'Set ACTIVE'
+                  }}
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="onDeleteClass()"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="mb-3">
+              <div class="detail-label mb-1">Description</div>
+              <div class="detail-value">
+                {{ selectedClass.description || '-' }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="detail-label mb-1">Created / Updated</div>
+              <div class="detail-value small text-muted">
+                Created:
+                {{ selectedClass.createdAt | date : 'dd MMM yyyy, HH:mm' }} |
+                Updated:
+                {{ selectedClass.updatedAt | date : 'dd MMM yyyy, HH:mm' }}
+              </div>
+            </div>
+
+            <!-- SESSIONS TABLE -->
+            <h6 class="mb-2">Sessions</h6>
+
+            <div class="table-responsive mb-3">
+              <table
+                class="table table-sm table-hover align-middle sessions-detail-table mb-0"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Topic</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let s of selectedClass.sessions || []">
+                    <td>{{ s.sessionNumber }}</td>
+                    <td>{{ s.topic }}</td>
+                    <td>{{ s.sessionDate | date : 'dd MMM yyyy' }}</td>
+                    <td>
+                      {{ (s.startTime || '') | slice : 0 : 5 }} -
+                      {{ (s.endTime || '') | slice : 0 : 5 }}
+                    </td>
+                    <td>
+                      <span
+                        class="badge"
+                        [ngClass]="{
+                          'bg-success': s.isCompleted,
+                          'bg-secondary': !s.isCompleted
+                        }"
+                      >
+                        {{ s.isCompleted ? 'Completed' : 'Upcoming' }}
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="!selectedClass.sessions.length">
+                    <td colspan="5" class="text-center text-muted small py-3">
+                      No sessions defined for this class.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PARTICIPANTS TABLE -->
+            <h6 class="mb-2">
+              Participants
+              <span class="badge bg-light text-dark ms-1">
+                {{ selectedClass.participantCount || 0 }}
+              </span>
+            </h6>
+
+            <div class="table-responsive">
+              <table
+                class="table table-sm table-hover align-middle participants-table mb-0"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of selectedClass.participants || []">
+                    <td>{{ p.fullName }}</td>
+                    <td class="text-muted small">
+                      {{ p.email }}
+                    </td>
+                    <td class="text-muted small">
+                      {{ p.phone }}
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="!selectedClass.participants.length">
+                    <td colspan="3" class="text-center text-muted small py-3">
+                      No participants for this class.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noSelection>
+        <div class="card shadow-sm">
+          <div class="card-body text-muted small">
+            Select a class from the list to view details.
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- ADD CLASS MODAL -->
+  <div class="sh-modal-backdrop" *ngIf="showAddModal">
+    <div class="sh-modal">
+      <div class="sh-modal-header">
+        <h5 class="mb-0">Add Class</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="closeAddModal()"
+        ></button>
+      </div>
+
+      <div class="sh-modal-body">
+        <form [formGroup]="addForm" (ngSubmit)="submitAddClass()">
+          <!-- Basic info -->
+          <div class="mb-3">
+            <label class="form-label">Class Name</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              formControlName="className"
+            />
+            <div
+              class="text-danger small mt-1"
+              *ngIf="classNameCtrl?.invalid && classNameCtrl?.touched"
+            >
+              Class name is required (min 3 characters).
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea
+              rows="3"
+              class="form-control form-control-sm"
+              formControlName="description"
+            ></textarea>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="descriptionCtrl?.invalid && descriptionCtrl?.touched"
+            >
+              Description is required (min 10 characters).
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label">Start Date</label>
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                formControlName="startDate"
+              />
+              <div
+                class="text-danger small mt-1"
+                *ngIf="startDateCtrl?.invalid && startDateCtrl?.touched"
+              >
+                Start date is required.
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">End Date</label>
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                formControlName="endDate"
+              />
+              <div
+                class="text-danger small mt-1"
+                *ngIf="endDateCtrl?.invalid && endDateCtrl?.touched"
+              >
+                End date is required.
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Capacity</label>
+              <input
+                type="number"
+                min="1"
+                class="form-control form-control-sm"
+                formControlName="capacity"
+              />
+              <div
+                class="text-danger small mt-1"
+                *ngIf="capacityCtrl?.invalid && capacityCtrl?.touched"
+              >
+                Capacity must be at least 1.
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructor Name manual -->
+          <div class="mb-3">
+            <label class="form-label">Instructor Name</label>
+            <input
+              type="text"
+              min="1"
+              class="form-control form-control-sm"
+              formControlName="instructor"
+            />
+            <div
+              class="text-danger small mt-1"
+              *ngIf="instructorCtrl?.invalid && instructorCtrl?.touched"
+            >
+              Instructor Name is required.
+            </div>
+          </div>
+
+          <!-- Sessions -->
+          <div class="mb-2 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Sessions</h6>
+            <div class="d-flex gap-2">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                (click)="addSessionRow()"
+              >
+                + Add Session
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive mb-2">
+            <table class="table table-sm align-middle sessions-table mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Topic</th>
+                  <th>Date</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody formArrayName="sessions">
+                <tr
+                  *ngFor="let s of sessionsArray.controls; let i = index"
+                  [formGroupName]="i"
+                >
+                  <td style="width: 40px;">
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      formControlName="sessionNumber"
+                      min="1"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      formControlName="topic"
+                    />
+                  </td>
+                  <td style="width: 130px;">
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      formControlName="sessionDate"
+                    />
+                  </td>
+                  <td style="width: 90px;">
+                    <input
+                      type="time"
+                      class="form-control form-control-sm"
+                      formControlName="startTime"
+                    />
+                  </td>
+                  <td style="width: 90px;">
+                    <input
+                      type="time"
+                      class="form-control form-control-sm"
+                      formControlName="endTime"
+                    />
+                  </td>
+                  <td style="width: 40px;" class="text-end">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="removeSessionRow(i)"
+                      [disabled]="sessionsArray.length <= 1"
+                    >
+                      &times;
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="closeAddModal()"
+              [disabled]="isSubmitting"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-sm btn-primary"
+              [disabled]="isSubmitting"
+            >
+              <span
+                *ngIf="isSubmitting"
+                class="spinner-border spinner-border-sm me-1"
+              ></span>
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
