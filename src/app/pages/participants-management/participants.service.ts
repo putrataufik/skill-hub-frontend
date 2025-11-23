@@ -44,7 +44,7 @@ export interface CreateParticipantDto {
   fullName: string;
   email: string;
   phone: string;
-  dateOfBirth: string; // format: YYYY-MM-DD
+  dateOfBirth: string;
 }
 
 @Injectable({
@@ -56,22 +56,18 @@ export class ParticipantsService {
   constructor(private http: HttpClient) {}
 
   getParticipants(): Observable<Participant[]> {
-    // GET http://localhost:3000/participants
     return this.http.get<Participant[]>(`${this.baseUrl}`);
   }
 
   getParticipant(id: number): Observable<ParticipantDetail> {
-    // GET http://localhost:3000/participants/:id
     return this.http.get<ParticipantDetail>(`${this.baseUrl}/${id}`);
   }
 
   createParticipant(dto: CreateParticipantDto): Observable<ParticipantDetail> {
-    // POST http://localhost:3000/participants
     return this.http.post<ParticipantDetail>(`${this.baseUrl}`, dto);
   }
 
   deleteParticipant(id: number): Observable<any> {
-    // DELETE http://localhost:3000/participants/:id
     return this.http.delete<any>(`${this.baseUrl}/${id}`);
   }
 }

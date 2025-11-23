@@ -1,10 +1,7 @@
-/* src/app/pages/enrollment-management/enrollment-management.component.scss */
-
 .enrollments-page {
   padding-top: 0.75rem;
 }
 
-/* Card kiri (list enrollments) */
 .enrollments-card {
   border-radius: 0.75rem;
   border: none;
@@ -15,7 +12,6 @@
   font-weight: 600;
 }
 
-/* Table enrollments (kiri) */
 .enrollments-table {
   font-size: 0.8rem;
 
@@ -43,7 +39,6 @@
   }
 }
 
-/* Card kanan (detail) */
 .enrollment-detail-card {
   border-radius: 0.75rem;
   border: none;
@@ -63,7 +58,6 @@
   }
 }
 
-/* Modal (reuse style yang sama dengan halaman lain) */
 .sh-modal-backdrop {
   position: fixed;
   inset: 0;

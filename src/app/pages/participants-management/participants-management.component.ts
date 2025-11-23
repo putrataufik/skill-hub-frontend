@@ -1,4 +1,3 @@
-// src/app/pages/participants-management/participants-management.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -55,7 +54,8 @@ export class ParticipantsManagementComponent implements OnInit {
 
   private extractErrorMessage(err: any): string {
     if (!err) return 'Unknown error';
-    const raw = err?.error?.message ?? err?.message ?? err?.statusText ?? err?.error;
+    const raw =
+      err?.error?.message ?? err?.message ?? err?.statusText ?? err?.error;
     if (Array.isArray(raw)) return raw.join(', ');
     if (typeof raw === 'string') return raw;
     try {
@@ -64,8 +64,6 @@ export class ParticipantsManagementComponent implements OnInit {
       return 'Unknown error';
     }
   }
-
-  // ===== LIST & DETAIL =====
 
   loadParticipants(): void {
     this.isLoadingList = true;
@@ -109,7 +107,6 @@ export class ParticipantsManagementComponent implements OnInit {
     });
   }
 
-  // ===== DELETE PARTICIPANT =====
 
   onDeleteParticipant(): void {
     if (!this.selectedParticipant) return;
@@ -129,12 +126,9 @@ export class ParticipantsManagementComponent implements OnInit {
 
       this.participantsService.deleteParticipant(p.id).subscribe({
         next: () => {
-          // hapus dari list
           this.participants = this.participants.filter(
             (item) => item.id !== p.id
           );
-
-          // reset / pilih yang lain
           if (this.participants.length > 0) {
             this.onSelectParticipant(this.participants[0]);
           } else {
@@ -150,8 +144,6 @@ export class ParticipantsManagementComponent implements OnInit {
       });
     });
   }
-
-  // ===== MODAL ADD PARTICIPANT =====
 
   openAddModal(): void {
     this.addForm.reset();
@@ -175,7 +167,7 @@ export class ParticipantsManagementComponent implements OnInit {
       fullName: raw.fullName,
       email: raw.email,
       phone: raw.phone,
-      dateOfBirth: raw.dateOfBirth, // input[type=date] -> yyyy-mm-dd
+      dateOfBirth: raw.dateOfBirth,
     };
 
     this.isSubmitting = true;
@@ -197,8 +189,6 @@ export class ParticipantsManagementComponent implements OnInit {
       },
     });
   }
-
-  // Helpers untuk template
   get fullNameCtrl() {
     return this.addForm.get('fullName');
   }

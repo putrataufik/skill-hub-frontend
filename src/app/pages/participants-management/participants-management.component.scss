@@ -1,21 +1,19 @@
-/* src/app/pages/participants-management/participants-management.component.scss */
-
 .participants-page {
   padding-top: 0.75rem;
 }
 
-/* Card kiri (list participants) */
+
 .participants-card {
   border-radius: 0.75rem;
   border: none;
-  overflow: hidden; // header + body ikut rounded
+  overflow: hidden;
 }
 
 .participants-header h5 {
   font-weight: 600;
 }
 
-/* Table participants (kiri) */
+
 .participants-table {
   font-size: 0.8rem;
 
@@ -31,11 +29,11 @@
   }
 
   &.table-hover tbody tr:hover {
-    background-color: #f3f4f6; // hover abu-abu muda
+    background-color: #f3f4f6; 
   }
 
   tbody tr.active {
-    background-color: #e5e7eb; // aktif abu-abu sedikit lebih gelap
+    background-color: #e5e7eb; 
   }
 
   tbody tr.active:hover {
@@ -43,7 +41,7 @@
   }
 }
 
-/* Card kanan (detail) */
+
 .participant-detail-card {
   border-radius: 0.75rem;
   border: none;
@@ -63,7 +61,6 @@
   }
 }
 
-/* Tabel enrollments kanan */
 .enrollments-table {
   font-size: 0.8rem;
 
@@ -72,8 +69,6 @@
     padding: 0.35rem 0.5rem;
   }
 }
-
-/* Modal custom tetap seperti sebelumnya */
 .sh-modal-backdrop {
   position: fixed;
   inset: 0;

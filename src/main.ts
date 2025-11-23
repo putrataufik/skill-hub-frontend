@@ -1,4 +1,3 @@
-// src/main.ts
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -9,6 +8,6 @@ import { routes } from './app/app.routes';
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    provideHttpClient(),  // ⬅⬅ ini yang wajib
+    provideHttpClient(), 
   ],
 }).catch((err) => console.error(err));

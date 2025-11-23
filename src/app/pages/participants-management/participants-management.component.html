@@ -1,8 +1,5 @@
-<!-- src/app/pages/participants-management/participants-management.component.html -->
-
 <div class="participants-page container-fluid">
   <div class="row g-3">
-    <!-- LEFT: LIST PARTICIPANTS -->
     <div class="col-12 col-lg-4">
       <div class="card shadow-sm participants-card">
         <div
@@ -62,7 +59,6 @@
       </div>
     </div>
 
-    <!-- RIGHT: DETAIL PARTICIPANT -->
     <div class="col-12 col-lg-8">
       <div *ngIf="isLoadingDetail" class="text-muted small mb-2">
         Loading participant detail...
@@ -135,7 +131,7 @@
               </div>
             </div>
 
-            <!-- ENROLLMENTS TABLE -->
+      
             <h6 class="mb-2">Enrollments</h6>
 
             <div class="table-responsive">
@@ -217,7 +213,7 @@
     </div>
   </div>
 
-  <!-- ADD PARTICIPANT MODAL (simple custom modal) -->
+  
   <div class="sh-modal-backdrop" *ngIf="showAddModal">
     <div class="sh-modal">
       <div class="sh-modal-header">

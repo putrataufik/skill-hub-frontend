@@ -1,10 +1,8 @@
-/* src/app/pages/class-management/class-management.component.scss */
-
 .classes-page {
   padding-top: 0.75rem;
 }
 
-/* Card kiri (list classes) */
+
 .classes-card {
   border-radius: 0.75rem;
   border: none;
@@ -15,7 +13,7 @@
   font-weight: 600;
 }
 
-/* Table classes (kiri) */
+
 .classes-table {
   font-size: 0.8rem;
 
@@ -43,7 +41,6 @@
   }
 }
 
-/* Card kanan (detail class) */
 .class-detail-card {
   border-radius: 0.75rem;
   border: none;
@@ -59,7 +56,7 @@
   color: #111827;
 }
 
-/* Tabel participants */
+
 .participants-table {
   font-size: 0.8rem;
 
@@ -69,7 +66,7 @@
   }
 }
 
-/* Tabel sessions di modal */
+
 .sessions-table {
   font-size: 0.8rem;
 
@@ -79,7 +76,6 @@
   }
 }
 
-/* Modal (reuse style seperti halaman lain) */
 .sh-modal-backdrop {
   position: fixed;
   inset: 0;

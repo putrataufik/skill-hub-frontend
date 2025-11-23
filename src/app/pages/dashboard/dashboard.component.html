@@ -1,20 +1,7 @@
-<!-- src/app/pages/dashboard/dashboard.component.html -->
-
 <div class="dashboard-page container-fluid">
-  <!-- KPI Cards -->
   <div class="row g-3 mb-4">
-    <!-- Total Class -->
-    <div class="col-12 col-md-4">
-      <div class="card kpi-card shadow-sm">
-        <div class="card-body">
-          <div class="kpi-label">Total Class</div>
-          <div class="kpi-value">{{ totalClasses }}</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Total Participants -->
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-6 col-lg-3">
       <div class="card kpi-card shadow-sm">
         <div class="card-body">
           <div class="kpi-label">Total Participants</div>
@@ -23,64 +10,92 @@
       </div>
     </div>
 
-    <!-- Total Instructors -->
-    <div class="col-12 col-md-4">
+
+    <div class="col-12 col-md-6 col-lg-3">
       <div class="card kpi-card shadow-sm">
         <div class="card-body">
-          <div class="kpi-label">Total Instructors</div>
-          <div class="kpi-value">{{ totalInstructors }}</div>
+          <div class="kpi-label">Total Classes</div>
+          <div class="kpi-value">{{ totalClasses }}</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- KPI Cards tetap seperti sebelumnya -->
 
-  <!-- Current Activity Table Card -->
-  <div class="row">
-    <div class="col-12 col-lg-6">
-      <div class="card shadow-sm current-activity-card">
-        <div
-          class="card-header d-flex justify-content-between align-items-center"
-        >
-          <h5 class="mb-0">Current Activity</h5>
-        </div>
+  <div class="row g-3">
 
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table
-              class="table table-hover table-sm mb-0 align-middle current-activity-table"
-            >
-              <thead class="table-light">
-                <tr>
-                  <th scope="col">Class Name</th>
-                  <th scope="col">Start Date</th>
-                  <th scope="col">End Date</th>
-                  <th scope="col">Instructor</th>
-                  <th scope="col" class="text-end">Capacity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let activity of currentActivities">
-                  <td>{{ activity.className }}</td>
-                  <td>{{ activity.startDate | date : "dd MMM yyyy" }}</td>
-                  <td>{{ activity.endDate | date : "dd MMM yyyy" }}</td>
-                  <td>{{ activity.instructor }}</td>
-                  <td class="text-end">{{ activity.capacity }}</td>
-                </tr>
 
-                <tr
-                  *ngIf="!currentActivities || currentActivities.length === 0"
-                >
-                  <td colspan="5" class="text-center text-muted py-3">
-                    No current activity data.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+<div class="col-12 col-lg-6">
+  <div class="card shadow-sm dashboard-card">
+    <div class="card-header">
+      <h5 class="mb-0">Participants</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="card-table-wrapper">
+        <table class="table table-hover table-sm mb-0 compact-table">
+          <thead class="table-light">
+            <tr>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of participants">
+              <td>{{ p.fullName }}</td>
+              <td class="text-muted small">{{ p.email }}</td>
+              <td class="text-muted small">{{ p.phone }}</td>
+            </tr>
+            <tr *ngIf="participants.length === 0">
+              <td colspan="3" class="text-center text-muted py-3">
+                No participants data.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
+
+
+<div class="col-12 col-lg-6">
+  <div class="card shadow-sm dashboard-card">
+    <div class="card-header">
+      <h5 class="mb-0">Classes</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="card-table-wrapper">
+        <table class="table table-hover table-sm mb-0 compact-table">
+          <thead class="table-light">
+            <tr>
+              <th>Class Name</th>
+              <th>Instructor</th>
+              <th>Period</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of classes">
+              <td>{{ c.className }}</td>
+              <td class="text-muted small">{{ c.instructor }}</td>
+              <td class="text-muted small">
+                {{ c.startDate | date : 'dd MMM' }} -
+                {{ c.endDate | date : 'dd MMM' }}
+              </td>
+            </tr>
+            <tr *ngIf="classes.length === 0">
+              <td colspan="3" class="text-center text-muted py-3">
+                No classes data.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+
 </div>

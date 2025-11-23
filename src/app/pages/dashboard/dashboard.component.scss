@@ -1,52 +1,54 @@
-/* src/app/pages/dashboard/dashboard.component.scss */
-
 .dashboard-page {
   padding-top: 0.75rem;
 }
 
-/* KPI card (biarkan seperti sebelumnya kalau sudah ada) */
 .kpi-card {
-  border: none;
   border-radius: 0.75rem;
-
-  .card-body {
-    padding: 1rem 1.25rem;
-  }
+  border: none;
 
   .kpi-label {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.8rem;
     color: #6b7280;
-    margin-bottom: 0.25rem;
   }
 
   .kpi-value {
-    font-size: 1.8rem;
-    font-weight: 600;
+    font-size: 1.6rem;
+    font-weight: 700;
     color: #111827;
   }
 }
 
-/* Card Current Activity hanya setengah layar (via col-lg-6) + styling */
-.current-activity-card {
+
+.dashboard-card {
   border-radius: 0.75rem;
   border: none;
+
+
+  min-height: 260px;
+  max-height: 360px;
+
+  display: flex;
+  flex-direction: column;
+
+  .card-body {
+    flex: 1;
+    padding: 0;
+  }
 }
 
-/* Table compact + font kecil */
-.current-activity-table {
-  font-size: 0.8rem; // perkecil font
+.card-table-wrapper {
+  padding: 0.5rem 0.75rem 0.75rem;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.compact-table {
+  font-size: 0.8rem;
 
   th,
   td {
-    padding-top: 0.3rem;
-    padding-bottom: 0.3rem;
-    padding-left: 0.6rem;
-    padding-right: 0.6rem;
+    padding: 0.35rem 0.5rem !important;
     vertical-align: middle;
-  }
-
-  thead th {
-    border-bottom-width: 1px;
   }
 }

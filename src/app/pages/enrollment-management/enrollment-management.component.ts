@@ -67,8 +67,6 @@ export class EnrollmentManagementComponent implements OnInit {
     });
   }
 
-  // ===== LOAD MASTER DATA =====
-
   loadEnrollments(): void {
     this.isLoadingList = true;
     this.enrollmentsService.getEnrollments().subscribe({
@@ -130,13 +128,9 @@ export class EnrollmentManagementComponent implements OnInit {
     });
   }
 
-  // ===== SELECT ROW =====
-
   onSelectEnrollment(row: Enrollment): void {
     this.selectedEnrollment = row;
   }
-
-  // ===== MODAL ADD ENROLLMENT =====
 
   openAddModal(): void {
     this.addForm.reset({
@@ -191,8 +185,7 @@ export class EnrollmentManagementComponent implements OnInit {
       },
     });
   }
-
-  // Helpers untuk template
+  
   get participantIdCtrl() {
     return this.addForm.get('participantId');
   }

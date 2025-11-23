@@ -56,12 +56,9 @@ export class ClassManagementComponent implements OnInit {
       instructor: [null, [Validators.required]],
       sessions: this.fb.array([]),
     });
-
-    // minimal 1 session default
     this.addSessionRow();
   }
 
-  // ======= helper error message =======
   private extractErrorMessage(err: any): string {
     if (!err) return 'Unknown error';
     const raw = err.error?.message ?? err.message ?? err.statusText ?? err.error;
@@ -69,8 +66,6 @@ export class ClassManagementComponent implements OnInit {
     if (typeof raw === 'string') return raw;
     return JSON.stringify(raw);
   }
-
-  // ======= FormArray Sessions =======
 
   get sessionsArray(): FormArray {
     return this.addForm.get('sessions') as FormArray;
@@ -97,15 +92,13 @@ export class ClassManagementComponent implements OnInit {
   }
 
   removeSessionRow(index: number): void {
-    if (this.sessionsArray.length <= 1) return; // minimal 1 sesi
+    if (this.sessionsArray.length <= 1) return;
     this.sessionsArray.removeAt(index);
-    // re-number sessionNumber setelah hapus
     this.sessionsArray.controls.forEach((ctrl, i) => {
       ctrl.get('sessionNumber')?.setValue(i + 1);
     });
   }
 
-  // ======= LOAD DATA =======
 
   loadClasses(): void {
     this.isLoadingList = true;
@@ -149,8 +142,6 @@ export class ClassManagementComponent implements OnInit {
     });
   }
 
-  // ======= TOGGLE STATUS & DELETE =======
-
   onToggleStatus(): void {
     if (!this.selectedClass) return;
     const current = this.selectedClass.status;
@@ -158,13 +149,11 @@ export class ClassManagementComponent implements OnInit {
 
     this.classesService.updateStatus(this.selectedClass.id, newStatus).subscribe({
       next: (updated) => {
-        // update detail
         this.selectedClass = {
           ...this.selectedClass!,
           ...updated,
           status: newStatus,
         };
-        // update list
         const idx = this.classes.findIndex((c) => c.id === updated.id);
         if (idx !== -1) {
           this.classes[idx] = {
@@ -201,9 +190,8 @@ export class ClassManagementComponent implements OnInit {
 
       this.classesService.deleteClass(id).subscribe({
         next: () => {
-          // remove from list
           this.classes = this.classes.filter((c) => c.id !== id);
-          // pilih class lain atau kosongkan
+         
           if (this.classes.length > 0) {
             this.onSelectClass(this.classes[0]);
           } else {
@@ -220,15 +208,12 @@ export class ClassManagementComponent implements OnInit {
     });
   }
 
-  // ======= MODAL CREATE CLASS =======
-
   openAddModal(): void {
     this.addForm.reset({
       capacity: 25,
       instructor: null,
     });
 
-    // reset sessions array ke 1 baris kosong
     while (this.sessionsArray.length > 0) {
       this.sessionsArray.removeAt(0);
     }
@@ -290,7 +275,6 @@ export class ClassManagementComponent implements OnInit {
     });
   }
 
-  // helpers
   get classNameCtrl() {
     return this.addForm.get('className');
   }

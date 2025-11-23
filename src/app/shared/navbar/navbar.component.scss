@@ -1,14 +1,10 @@
-/* src/app/shared/navbar/navbar.component.scss */
-
-/* Wrapper navbar berbentuk "card" rounded, ada margin atas & kiri/kanan */
 .skillhub-navbar {
-  border-radius: 0.75rem;   // rounded
-  overflow: hidden;         // supaya background dark ikut rounded
+  border-radius: 0.75rem;  
+  overflow: hidden;        
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
   font-weight: 500;
 }
 
-/* Sedikit tweak brand & link */
 .navbar-brand {
   font-weight: 600;
   letter-spacing: 0.03em;
