@@ -1,4 +1,3 @@
-// src/app/pages/class-management/class-management.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -16,6 +15,7 @@ import {
   ClassDetail,
   CreateClassDto,
   ClassSessionDto,
+  UpdateClassDto,
 } from './classes.service';
 
 @Component({
@@ -36,17 +36,22 @@ export class ClassManagementComponent implements OnInit {
   addForm!: FormGroup;
   isSubmitting = false;
 
+  showEditModal = false;
+  editForm!: FormGroup;
+  isEditSubmitting = false;
+
   constructor(
     private classesService: ClassesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
-    this.initForm();
+    this.initAddForm();
+    this.initEditForm();
     this.loadClasses();
   }
 
-  private initForm(): void {
+  private initAddForm(): void {
     this.addForm = this.fb.group({
       className: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
@@ -57,6 +62,17 @@ export class ClassManagementComponent implements OnInit {
       sessions: this.fb.array([]),
     });
     this.addSessionRow();
+  }
+
+  private initEditForm(): void {
+    this.editForm = this.fb.group({
+      className: ['', [Validators.required, Validators.minLength(3)]],
+      description: ['', [Validators.required, Validators.minLength(10)]],
+      startDate: ['', [Validators.required]],
+      endDate: ['', [Validators.required]],
+      capacity: [1, [Validators.required, Validators.min(1)]],
+      instructor: [null, [Validators.required]],
+    });
   }
 
   private extractErrorMessage(err: any): string {
@@ -98,7 +114,6 @@ export class ClassManagementComponent implements OnInit {
       ctrl.get('sessionNumber')?.setValue(i + 1);
     });
   }
-
 
   loadClasses(): void {
     this.isLoadingList = true;
@@ -191,7 +206,7 @@ export class ClassManagementComponent implements OnInit {
       this.classesService.deleteClass(id).subscribe({
         next: () => {
           this.classes = this.classes.filter((c) => c.id !== id);
-         
+
           if (this.classes.length > 0) {
             this.onSelectClass(this.classes[0]);
           } else {
@@ -242,7 +257,7 @@ export class ClassManagementComponent implements OnInit {
         sessionDate: s.sessionDate,
         startTime: s.startTime,
         endTime: s.endTime,
-      })
+      }),
     );
 
     const payload: CreateClassDto = {
@@ -275,6 +290,77 @@ export class ClassManagementComponent implements OnInit {
     });
   }
 
+  openEditModal(): void {
+    if (!this.selectedClass) return;
+
+    const c = this.selectedClass;
+
+    this.editForm.reset({
+      className: c.className,
+      description: c.description,
+      startDate: c.startDate,
+      endDate: c.endDate,
+      capacity: c.capacity,
+      instructor: c.instructor,
+    });
+
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    if (this.isEditSubmitting) return;
+    this.showEditModal = false;
+  }
+
+  submitEditClass(): void {
+    if (!this.selectedClass) return;
+
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.editForm.value;
+
+    const payload: UpdateClassDto = {
+      className: raw.className,
+      description: raw.description,
+      startDate: raw.startDate,
+      endDate: raw.endDate,
+      capacity: Number(raw.capacity),
+      instructor: raw.instructor,
+    };
+
+    this.isEditSubmitting = true;
+
+    this.classesService.updateClass(this.selectedClass.id, payload).subscribe({
+      next: (updated) => {
+        this.isEditSubmitting = false;
+        this.showEditModal = false;
+
+        this.selectedClass = {
+          ...this.selectedClass!,
+          ...updated,
+        };
+
+        const idx = this.classes.findIndex((c) => c.id === updated.id);
+        if (idx !== -1) {
+          this.classes[idx] = {
+            ...this.classes[idx],
+            ...updated,
+          };
+        }
+
+        Swal.fire('Updated', 'Class has been updated.', 'success');
+      },
+      error: (err) => {
+        console.error('Failed to update class', err);
+        this.isEditSubmitting = false;
+        Swal.fire('Error', this.extractErrorMessage(err), 'error');
+      },
+    });
+  }
+
   get classNameCtrl() {
     return this.addForm.get('className');
   }
@@ -292,5 +378,24 @@ export class ClassManagementComponent implements OnInit {
   }
   get instructorCtrl() {
     return this.addForm.get('instructor');
+  }
+
+  get editClassNameCtrl() {
+    return this.editForm.get('className');
+  }
+  get editDescriptionCtrl() {
+    return this.editForm.get('description');
+  }
+  get editStartDateCtrl() {
+    return this.editForm.get('startDate');
+  }
+  get editEndDateCtrl() {
+    return this.editForm.get('endDate');
+  }
+  get editCapacityCtrl() {
+    return this.editForm.get('capacity');
+  }
+  get editInstructorCtrl() {
+    return this.editForm.get('instructor');
   }
 }

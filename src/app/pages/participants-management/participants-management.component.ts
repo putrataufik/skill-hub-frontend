@@ -1,3 +1,4 @@
+// src/app/features/participants/participants-management.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -13,6 +14,7 @@ import {
   Participant,
   ParticipantDetail,
   CreateParticipantDto,
+  UpdateParticipantDto,
 } from './participants.service';
 
 @Component({
@@ -29,22 +31,38 @@ export class ParticipantsManagementComponent implements OnInit {
   isLoadingList = false;
   isLoadingDetail = false;
 
+  // ADD modal
   showAddModal = false;
   addForm!: FormGroup;
   isSubmitting = false;
 
+  // EDIT modal
+  showEditModal = false;
+  editForm!: FormGroup;
+  isEditSubmitting = false;
+
   constructor(
     private participantsService: ParticipantsService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
-    this.initForm();
+    this.initAddForm();
+    this.initEditForm();
     this.loadParticipants();
   }
 
-  private initForm(): void {
+  private initAddForm(): void {
     this.addForm = this.fb.group({
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
+      dateOfBirth: ['', [Validators.required]],
+    });
+  }
+
+  private initEditForm(): void {
+    this.editForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required]],
@@ -107,7 +125,6 @@ export class ParticipantsManagementComponent implements OnInit {
     });
   }
 
-
   onDeleteParticipant(): void {
     if (!this.selectedParticipant) return;
 
@@ -127,7 +144,7 @@ export class ParticipantsManagementComponent implements OnInit {
       this.participantsService.deleteParticipant(p.id).subscribe({
         next: () => {
           this.participants = this.participants.filter(
-            (item) => item.id !== p.id
+            (item) => item.id !== p.id,
           );
           if (this.participants.length > 0) {
             this.onSelectParticipant(this.participants[0]);
@@ -189,6 +206,77 @@ export class ParticipantsManagementComponent implements OnInit {
       },
     });
   }
+
+  openEditModal(): void {
+    if (!this.selectedParticipant) return;
+
+    const p = this.selectedParticipant;
+
+    this.editForm.reset();
+    this.editForm.patchValue({
+      fullName: p.fullName,
+      email: p.email,
+      phone: p.phone,
+      dateOfBirth: p.dateOfBirth,
+    });
+
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    if (this.isEditSubmitting) return;
+    this.showEditModal = false;
+  }
+
+  submitEditParticipant(): void {
+    if (!this.selectedParticipant) return;
+
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    const raw = this.editForm.value;
+
+    const payload: UpdateParticipantDto = {
+      fullName: raw.fullName,
+      email: raw.email,
+      phone: raw.phone,
+      dateOfBirth: raw.dateOfBirth,
+    };
+
+    this.isEditSubmitting = true;
+
+    this.participantsService
+      .updateParticipant(this.selectedParticipant.id, payload)
+      .subscribe({
+        next: (updated) => {
+          this.isEditSubmitting = false;
+          this.showEditModal = false;
+
+          const idx = this.participants.findIndex(
+            (item) => item.id === updated.id,
+          );
+          if (idx !== -1) {
+            this.participants[idx] = {
+              ...this.participants[idx],
+              ...updated,
+            };
+          }
+
+          this.selectedParticipant = updated;
+
+          Swal.fire('Updated', 'Participant has been updated.', 'success');
+        },
+        error: (err) => {
+          console.error('Failed to update participant', err);
+          this.isEditSubmitting = false;
+          Swal.fire('Error', this.extractErrorMessage(err), 'error');
+        },
+      });
+  }
+
+  // getters ADD form
   get fullNameCtrl() {
     return this.addForm.get('fullName');
   }
@@ -200,5 +288,18 @@ export class ParticipantsManagementComponent implements OnInit {
   }
   get dobCtrl() {
     return this.addForm.get('dateOfBirth');
+  }
+
+  get editFullNameCtrl() {
+    return this.editForm.get('fullName');
+  }
+  get editEmailCtrl() {
+    return this.editForm.get('email');
+  }
+  get editPhoneCtrl() {
+    return this.editForm.get('phone');
+  }
+  get editDobCtrl() {
+    return this.editForm.get('dateOfBirth');
   }
 }

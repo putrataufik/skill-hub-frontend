@@ -1,5 +1,3 @@
-<!-- src/app/pages/class-management/class-management.component.html -->
-
 <div class="classes-page container-fluid">
   <div class="row g-3">
     <div class="col-12 col-lg-4">
@@ -120,6 +118,13 @@
               </div>
 
               <div class="mt-2 d-flex gap-1 justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  (click)="openEditModal()"
+                >
+                  Edit
+                </button>
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-secondary"
@@ -351,7 +356,6 @@
             <label class="form-label">Instructor Name</label>
             <input
               type="text"
-              min="1"
               class="form-control form-control-sm"
               formControlName="instructor"
             />
@@ -362,7 +366,7 @@
               Instructor Name is required.
             </div>
           </div>
-          
+
           <div class="mb-2 d-flex justify-content-between align-items-center">
             <h6 class="mb-0">Sessions</h6>
             <div class="d-flex gap-2">
@@ -463,6 +467,137 @@
                 class="spinner-border spinner-border-sm me-1"
               ></span>
               Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh-modal-backdrop" *ngIf="showEditModal">
+    <div class="sh-modal">
+      <div class="sh-modal-header">
+        <h5 class="mb-0">Edit Class</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="closeEditModal()"
+        ></button>
+      </div>
+
+      <div class="sh-modal-body">
+        <form [formGroup]="editForm" (ngSubmit)="submitEditClass()">
+          <div class="mb-3">
+            <label class="form-label">Class Name</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              formControlName="className"
+            />
+            <div
+              class="text-danger small mt-1"
+              *ngIf="editClassNameCtrl?.invalid && editClassNameCtrl?.touched"
+            >
+              Class name is required (min 3 characters).
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea
+              rows="3"
+              class="form-control form-control-sm"
+              formControlName="description"
+            ></textarea>
+            <div
+              class="text-danger small mt-1"
+              *ngIf="editDescriptionCtrl?.invalid && editDescriptionCtrl?.touched"
+            >
+              Description is required (min 10 characters).
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label">Start Date</label>
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                formControlName="startDate"
+              />
+              <div
+                class="text-danger small mt-1"
+                *ngIf="editStartDateCtrl?.invalid && editStartDateCtrl?.touched"
+              >
+                Start date is required.
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">End Date</label>
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                formControlName="endDate"
+              />
+              <div
+                class="text-danger small mt-1"
+                *ngIf="editEndDateCtrl?.invalid && editEndDateCtrl?.touched"
+              >
+                End date is required.
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label">Capacity</label>
+              <input
+                type="number"
+                min="1"
+                class="form-control form-control-sm"
+                formControlName="capacity"
+              />
+              <div
+                class="text-danger small mt-1"
+                *ngIf="editCapacityCtrl?.invalid && editCapacityCtrl?.touched"
+              >
+                Capacity must be at least 1.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Instructor Name</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              formControlName="instructor"
+            />
+            <div
+              class="text-danger small mt-1"
+              *ngIf="editInstructorCtrl?.invalid && editInstructorCtrl?.touched"
+            >
+              Instructor Name is required.
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="closeEditModal()"
+              [disabled]="isEditSubmitting"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-sm btn-primary"
+              [disabled]="isEditSubmitting"
+            >
+              <span
+                *ngIf="isEditSubmitting"
+                class="spinner-border spinner-border-sm me-1"
+              ></span>
+              Update
             </button>
           </div>
         </form>

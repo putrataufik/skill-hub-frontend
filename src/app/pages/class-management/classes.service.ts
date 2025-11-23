@@ -1,4 +1,3 @@
-// src/app/pages/class-management/classes.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -6,7 +5,7 @@ import { Observable } from 'rxjs';
 export interface ClassSummary {
   id: number;
   className: string;
-  instructor: string; // plain text
+  instructor: string;
   description: string;
   startDate: string;
   endDate: string;
@@ -21,8 +20,8 @@ export interface ClassSession {
   sessionNumber: number;
   topic: string;
   sessionDate: string;
-  startTime: string; // "09:00:00"
-  endTime: string;   // "11:00:00"
+  startTime: string;
+  endTime: string;
   isCompleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -43,9 +42,9 @@ export interface ClassDetail extends ClassSummary {
 export interface ClassSessionDto {
   sessionNumber: number;
   topic: string;
-  sessionDate: string; // "YYYY-MM-DD"
-  startTime: string;   // "HH:mm"
-  endTime: string;     // "HH:mm"
+  sessionDate: string;
+  startTime: string;
+  endTime: string;
 }
 
 export interface CreateClassDto {
@@ -57,6 +56,8 @@ export interface CreateClassDto {
   instructor: string;
   sessions: ClassSessionDto[];
 }
+
+export type UpdateClassDto = Partial<CreateClassDto>;
 
 @Injectable({
   providedIn: 'root',
@@ -78,7 +79,14 @@ export class ClassesService {
     return this.http.post<ClassDetail>(this.baseUrl, dto);
   }
 
-  updateStatus(id: number, status: 'ACTIVE' | 'INACTIVE' | string): Observable<ClassDetail> {
+  updateClass(id: number, dto: UpdateClassDto): Observable<ClassDetail> {
+    return this.http.patch<ClassDetail>(`${this.baseUrl}/${id}`, dto);
+  }
+
+  updateStatus(
+    id: number,
+    status: 'ACTIVE' | 'INACTIVE' | string,
+  ): Observable<ClassDetail> {
     return this.http.patch<ClassDetail>(`${this.baseUrl}/${id}`, { status });
   }
 

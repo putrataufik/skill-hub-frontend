@@ -47,6 +47,9 @@ export interface CreateParticipantDto {
   dateOfBirth: string;
 }
 
+// PATCH biasanya partial
+export type UpdateParticipantDto = Partial<CreateParticipantDto>;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -65,6 +68,13 @@ export class ParticipantsService {
 
   createParticipant(dto: CreateParticipantDto): Observable<ParticipantDetail> {
     return this.http.post<ParticipantDetail>(`${this.baseUrl}`, dto);
+  }
+
+  updateParticipant(
+    id: number,
+    dto: UpdateParticipantDto,
+  ): Observable<ParticipantDetail> {
+    return this.http.patch<ParticipantDetail>(`${this.baseUrl}/${id}`, dto);
   }
 
   deleteParticipant(id: number): Observable<any> {

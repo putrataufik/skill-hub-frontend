@@ -57,4 +57,8 @@ export class EnrollmentsService {
   createEnrollment(dto: CreateEnrollmentDto): Observable<Enrollment> {
     return this.http.post<Enrollment>(`${this.baseUrl}`, dto);
   }
+
+  deleteEnrollment(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/${id}`);
+  }
 }

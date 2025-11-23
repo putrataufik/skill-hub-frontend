@@ -1,4 +1,3 @@
-// src/app/pages/enrollment-management/enrollment-management.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -49,7 +48,7 @@ export class EnrollmentManagementComponent implements OnInit {
     private enrollmentsService: EnrollmentsService,
     private participantsService: ParticipantsService,
     private classesService: ClassesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +83,7 @@ export class EnrollmentManagementComponent implements OnInit {
         Swal.fire(
           'Error',
           'Failed to load enrollments list. Please try again.',
-          'error'
+          'error',
         );
       },
     });
@@ -103,7 +102,7 @@ export class EnrollmentManagementComponent implements OnInit {
         Swal.fire(
           'Error',
           'Failed to load participants for enrollment form.',
-          'error'
+          'error',
         );
       },
     });
@@ -122,7 +121,7 @@ export class EnrollmentManagementComponent implements OnInit {
         Swal.fire(
           'Error',
           'Failed to load classes for enrollment form.',
-          'error'
+          'error',
         );
       },
     });
@@ -180,15 +179,65 @@ export class EnrollmentManagementComponent implements OnInit {
         Swal.fire(
           'Error',
           err.error?.message || 'Failed to create enrollment.',
-          'error'
+          'error',
         );
       },
     });
   }
-  
+
+  onDeleteEnrollment(): void {
+    if (!this.selectedEnrollment) return;
+
+    const e = this.selectedEnrollment;
+    const title = e.participant?.fullName
+      ? `Enrollment for "${e.participant.fullName}"?`
+      : `Enrollment ID ${e.id}?`;
+
+    Swal.fire({
+      title: 'Delete this enrollment?',
+      text: title,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc3545',
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.enrollmentsService.deleteEnrollment(e.id).subscribe({
+        next: (res) => {
+          this.enrollments = this.enrollments.filter(
+            (item) => item.id !== e.id,
+          );
+
+          if (this.enrollments.length > 0) {
+            this.onSelectEnrollment(this.enrollments[0]);
+          } else {
+            this.selectedEnrollment = undefined;
+          }
+
+          Swal.fire(
+            'Deleted',
+            res?.message || 'Enrollment has been deleted.',
+            'success',
+          );
+        },
+        error: (err) => {
+          console.error('Failed to delete enrollment', err);
+          Swal.fire(
+            'Error',
+            err.error?.message || 'Failed to delete enrollment.',
+            'error',
+          );
+        },
+      });
+    });
+  }
+
   get participantIdCtrl() {
     return this.addForm.get('participantId');
   }
+
   get classIdCtrl() {
     return this.addForm.get('classId');
   }
